@@ -4,7 +4,7 @@ GITHUB_REPO = nslookupper
 BASEDIR = $(CURDIR)
 PKGDIR_NAME  = pkg
 PKGDIR  = $(CURDIR)/$(PKGDIR_NAME)
-VERSION ?= `grep VERSION version.go | cut -f2 -d\"`
+VERSION ?= `grep Version version.go | cut -f2 -d\"`
 
 .PHONY: setup
 setup:
@@ -35,6 +35,17 @@ packages: ARCH := amd64
 packages: PARALLEL := 2
 packages:
 	gox -output="${PKGDIR}/{{.Dir}}_{{.OS}}_{{.Arch}}" -os="${OS_LIST}" -arch="${ARCH}" -parallel=${PARALLEL}
+
+.PHONY: version
+version:
+	@echo ${VERSION}
+
+.PHONY: git_tag git_push_tag tag
+git_tag:
+	git tag v${VERSION}
+git_push_tag:
+	git push origin v${VERSION}
+tag: git_tag git_push_tag
 
 .PHONY: prerelease release
 release:
